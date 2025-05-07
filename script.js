@@ -262,3 +262,20 @@ gsap.from(".project-card", {
     });
   });
 
+  // Up coming projects
+
+  gsap.utils.toArray(".upcoming-card").forEach((card, i) => {
+    gsap.from(card, {
+      scrollTrigger: {
+        trigger: "#upcoming-projects",
+        start: "top 85%",
+        toggleActions: "play none none reset"
+      },
+      opacity: 0,
+      y: 60,
+      duration: 1,
+      ease: "power3.out",
+      delay: i * 0.15,
+    });
+  });
+  
