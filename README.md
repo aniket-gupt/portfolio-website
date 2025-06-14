@@ -34,6 +34,3 @@ A modern, responsive personal portfolio website showcasing my work as a full-sta
 
 👉 [Live Demo](https://abhijeetbhale.github.io/Portfolio/)
 
-## 📸 Screenshot
-
-![Portfolio Website](assets/)
