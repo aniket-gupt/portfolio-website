@@ -612,3 +612,30 @@
     }
   }
   
+  /* Ensure particles work with locomotive scroll */
+  #particles-hero,
+  #particles-projects {
+    position: absolute !important;
+    z-index: 0;
+  }
+  
+  /* Custom Cursor */
+  * {
+    cursor: url('./assets/cursor.png'), auto;
+  }
+  
+  /* Custom cursor for interactive elements */
+  a, button, .button, .shadow__btn, .download-label, 
+  .project-card, .upcoming-card, .journey-card,
+  .example-2 .icon-content a,
+  .category-label,
+  input[type="checkbox"],
+  [data-scroll] {
+    cursor: url('./assets/cursor.png'), pointer;
+  }
+  
+  /* Ensure cursor works on all clickable elements */
+  [onclick], [role="button"], [tabindex] {
+    cursor: url('./assets/cursor.png'), pointer;
+  }
+  
