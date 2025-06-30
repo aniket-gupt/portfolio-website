@@ -639,3 +639,134 @@
     cursor: url('./assets/cursor.png'), pointer;
   }
   
+/* Performance Optimizations */
+
+/* Lazy loading for images */
+.lazy-image {
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.lazy-image.loaded {
+  opacity: 1;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  .loading-text span,
+  .button .hover-text,
+  .shadow__btn,
+  .download-container,
+  .project-card,
+  .journey-card {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Optimize animations for better performance */
+.project-card,
+.journey-card,
+.upcoming-card {
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Smooth scrolling optimization */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px; /* Account for fixed header if any */
+}
+
+/* Font loading optimization */
+@font-face {
+  font-family: 'Special Gothic Expanded One';
+  font-display: swap;
+  src: url('https://fonts.googleapis.com/css2?family=Special+Gothic+Expanded+One&display=swap');
+}
+
+/* Critical CSS for above-the-fold content */
+.hero-section {
+  contain: layout style paint;
+}
+
+/* Optimize particle animations */
+#particles-hero,
+#particles-projects {
+  contain: layout style paint;
+  will-change: transform;
+}
+
+/* Contact form optimizations */
+.contact-form input,
+.contact-form textarea,
+.contact-form select {
+  contain: layout style;
+}
+
+/* Loading state optimizations */
+#loading {
+  contain: layout style paint;
+}
+
+/* Scroll indicator optimization */
+#scroll-indicator {
+  contain: layout style;
+  will-change: height;
+}
+
+/* Custom cursor optimization */
+* {
+  cursor: url('./assets/cursor.png'), auto;
+}
+
+/* Focus management for accessibility */
+*:focus {
+  outline: 2px solid #1DCD9F;
+  outline-offset: 2px;
+}
+
+/* Skip to content link for accessibility */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: #1DCD9F;
+  color: white;
+  padding: 8px;
+  text-decoration: none;
+  border-radius: 4px;
+  z-index: 10000;
+}
+
+.skip-link:focus {
+  top: 6px;
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  
+  .project-card,
+  .journey-card {
+    break-inside: avoid;
+  }
+}
+  
