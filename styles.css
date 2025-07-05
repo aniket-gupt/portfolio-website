@@ -769,4 +769,94 @@ html {
     break-inside: avoid;
   }
 }
+
+/* Back to Top Button */
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 1000;
+}
+
+.back2top-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgb(20, 20, 20);
+  border: none;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0px 0px 0px 4px rgba(29, 205, 159, 0.253);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  position: relative;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+}
+
+.back2top-button.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.back2top-button:hover {
+  width: 140px;
+  border-radius: 50px;
+  background-color: #1DCD9F;
+  box-shadow: 0px 0px 0px 4px rgba(29, 205, 159, 0.4);
+}
+
+.svgIcon {
+  width: 12px;
+  transition: transform 0.3s ease;
+}
+
+.back2top-button:hover .svgIcon {
+  transform: translateY(-220%);
+}
+
+.svgIcon path {
+  fill: white;
+}
+
+.button-label {
+  position: absolute;
+  bottom: -20px;
+  color: white;
+  font-size: 0px;
+  opacity: 0;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.back2top-button:hover .button-label {
+  font-size: 13px;
+  opacity: 1;
+  bottom: unset;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .wrapper {
+    bottom: 20px;
+    right: 20px;
+  }
+  
+  .back2top-button {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .back2top-button:hover {
+    width: 120px;
+  }
+}
   
