@@ -314,6 +314,154 @@ document.addEventListener('DOMContentLoaded', function() {
   const submitLoading = document.getElementById('submitLoading');
   const formMessage = document.getElementById('formMessage');
   const messageText = document.getElementById('messageText');
+  const messageInput = document.getElementById('message');
+
+  // Gibberish detection functions
+  function detectGibberish(text) {
+    const errors = [];
+    
+    // Remove extra whitespace and normalize
+    const cleanText = text.trim().replace(/\s+/g, ' ');
+    
+
+    
+    // 1. Check minimum length
+    if (cleanText.length < 10) {
+      errors.push('Message must be at least 10 characters long');
+    }
+    
+    // 2. Check minimum word count
+    const words = cleanText.split(' ').filter(word => word.length > 0);
+    if (words.length < 3) {
+      errors.push('Message must contain at least 3 words');
+    }
+    
+    // 3. Check for excessive character repetition (e.g., "aaaaaa", "!!!!!!")
+    const charRepetition = /(.)\1{4,}/g;
+    if (charRepetition.test(cleanText)) {
+      errors.push('Message contains too many repeated characters');
+    }
+    
+    // 4. Check for excessive word repetition
+    const wordCounts = {};
+    words.forEach(word => {
+      const cleanWord = word.toLowerCase().replace(/[^\w]/g, '');
+      if (cleanWord.length > 2) {
+        wordCounts[cleanWord] = (wordCounts[cleanWord] || 0) + 1;
+      }
+    });
+    
+    const repeatedWords = Object.entries(wordCounts).filter(([word, count]) => count > 2);
+    if (repeatedWords.length > 0) {
+      errors.push('Message contains too many repeated words');
+    }
+    
+    // 5. Check for random character sequences (e.g., "asdfgh", "qwerty")
+    const randomPatterns = [
+      /asdfgh/i, /qwerty/i, /zxcvbn/i, /123456/i, /abcdef/i,
+      /[!@#$%^&*]{3,}/
+    ];
+    
+    for (const pattern of randomPatterns) {
+      if (pattern.test(cleanText)) {
+        errors.push('Message contains random character sequences');
+        break;
+      }
+    }
+    
+    // 5.5. Check for consecutive numbers (but allow normal text)
+    const consecutiveNumbers = /[0-9]{4,}/;
+    if (consecutiveNumbers.test(cleanText)) {
+      errors.push('Message contains random number sequences');
+    }
+    
+    // 6. Check for meaningful content (at least some words with 3+ characters)
+    const meaningfulWords = words.filter(word => word.length >= 3);
+    if (meaningfulWords.length < 2) {
+      errors.push('Message must contain meaningful words (3+ characters)');
+    }
+    
+    // 7. Check for excessive punctuation
+    const punctuationCount = (cleanText.match(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/g) || []).length;
+    if (punctuationCount > cleanText.length * 0.3) {
+      errors.push('Message contains too much punctuation');
+    }
+    
+    // 8. Check for all caps (shouting)
+    const upperCaseWords = words.filter(word => word === word.toUpperCase() && word.length > 2);
+    if (upperCaseWords.length > words.length * 0.5) {
+      errors.push('Please avoid typing in all capital letters');
+    }
+    
+    return {
+      isValid: errors.length === 0,
+      errors: errors
+    };
+  }
+
+  // Real-time validation
+  if (messageInput) {
+    let validationTimeout;
+    
+    messageInput.addEventListener('input', function() {
+      clearTimeout(validationTimeout);
+      
+      validationTimeout = setTimeout(() => {
+        const validation = detectGibberish(this.value);
+        const messageContainer = this.parentElement;
+        
+        // Remove existing validation messages
+        const existingError = messageContainer.querySelector('.validation-error');
+        if (existingError) {
+          existingError.remove();
+        }
+        
+        // Remove existing validation classes
+        this.classList.remove('border-red-500', 'border-green-500');
+        
+        if (this.value.trim() === '') {
+          return; // Don't show validation for empty field
+        }
+        
+        if (!validation.isValid) {
+          this.classList.add('border-red-500');
+          const errorDiv = document.createElement('div');
+          errorDiv.className = 'validation-error text-red-500 text-sm mt-1';
+          errorDiv.innerHTML = validation.errors.join('<br>');
+          messageContainer.appendChild(errorDiv);
+          
+          // Auto-remove error message after 4 seconds
+          setTimeout(() => {
+            if (errorDiv.parentNode) {
+              errorDiv.remove();
+            }
+          }, 2500);
+        } else {
+          this.classList.add('border-green-500');
+          const successDiv = document.createElement('div');
+          successDiv.className = 'validation-success text-green-500 text-sm mt-1';
+          successDiv.textContent = 'Message looks good!';
+          messageContainer.appendChild(successDiv);
+          
+          // Auto-remove success message after 3 seconds
+          setTimeout(() => {
+            if (successDiv.parentNode) {
+              successDiv.remove();
+            }
+          }, 1500);
+        }
+      }, 500); // Debounce validation
+    });
+    
+    // Clear validation on focus
+    messageInput.addEventListener('focus', function() {
+      const existingError = this.parentElement.querySelector('.validation-error');
+      const existingSuccess = this.parentElement.querySelector('.validation-success');
+      if (existingError) existingError.remove();
+      if (existingSuccess) existingSuccess.remove();
+      this.classList.remove('border-red-500', 'border-green-500');
+    });
+  }
 
   if (contactForm) {
     contactForm.addEventListener('submit', async function(e) {
@@ -326,6 +474,19 @@ document.addEventListener('DOMContentLoaded', function() {
       
       // Get form data
       const formData = new FormData(contactForm);
+      
+      // Validate message before submission
+      const message = formData.get('message');
+      const validation = detectGibberish(message);
+      
+      if (!validation.isValid) {
+        showMessage(`Please fix the following issues:<br>${validation.errors.join('<br>')}`, 'error');
+        // Reset button state
+        submitBtn.disabled = false;
+        submitText.classList.remove('hidden');
+        submitLoading.classList.add('hidden');
+        return;
+      }
       const data = {
         firstName: formData.get('firstName'),
         lastName: formData.get('lastName'),
