@@ -805,4 +805,21 @@ backToTopButton.addEventListener('click', () => {
     behavior: 'smooth'
   });
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+  const scrollBar = document.getElementById('scroll-bar');
+  if (scrollBar) {
+    scrollBar.addEventListener('click', function(e) {
+      const rect = scrollBar.getBoundingClientRect();
+      const clickY = e.clientY - rect.top;
+      const percent = clickY / rect.height;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const targetScroll = percent * docHeight;
+      window.scrollTo({
+        top: targetScroll,
+        behavior: 'smooth'
+      });
+    });
+  }
+});
   
