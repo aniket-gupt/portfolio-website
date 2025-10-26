@@ -823,4 +823,32 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
+// ==============================
+// 🌟 Dynamic GitHub Star Counter
+// ==============================
+document.addEventListener("DOMContentLoaded", async () => {
+  const username = "aniket-gupt";  // your GitHub username
+  const starElem = document.getElementById("githubStarCount");
+
+  if (!starElem) return; // if element missing, stop
+
+  try {
+    // Fetch all repositories (max 100 per page)
+    const response = await fetch(`https://api.github.com/users/${username}/repos?per_page=100`);
+    const repos = await response.json();
+
+    if (!Array.isArray(repos)) throw new Error("GitHub API error");
+
+    // Sum total stars across all repos
+    const totalStars = repos.reduce((sum, repo) => sum + (repo.stargazers_count || 0), 0);
+
+    // Update the HTML
+    starElem.textContent = totalStars.toLocaleString();
+
+  } catch (error) {
+    console.error("❌ Error fetching GitHub stars:", error);
+    starElem.textContent = "N/A";
+  }
+});
+
   
