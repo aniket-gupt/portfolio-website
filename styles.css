@@ -970,6 +970,9 @@ section, div, img, canvas {
     display: inline-block;
     opacity: 0;
   }
+  .fixed-email {
+    font-size: 0.5rem;
+  }
 }
 
 /* Fix position of scroll bar or back-to-top */
